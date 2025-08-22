@@ -1,0 +1,4 @@
+explainer:
+  method: shap
+  grounding: rag
+  topk: 5

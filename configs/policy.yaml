@@ -1,0 +1,4 @@
+policy:
+  algorithm: dqn
+  gamma: 0.99
+  replay: 100000
