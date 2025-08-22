@@ -1,0 +1,35 @@
+# DS2: MAD-GAN adversarial/synthetic sequences
+seed: 42
+
+# Core columns (no tenant in DS2; keep if present)
+time_col: ts          # if absent, set temporal=false and supply a dummy/derived ts
+label_col: label
+id_col: event_id
+tenant_col:
+
+# Networking (often N/A in synthetic data)
+ip_cols: []
+
+# Feature typing (adapt to your generated schema if different)
+categorical_cols: [op_type]
+numeric_cols: [rows_affected, duration_ms]
+
+drop_cols: []
+
+# No anonymization needed on synthetic/public data
+hash_anonymize_cols: []
+hash_salt_env_prefix: "AIDAC_SALT_"
+
+# Temporal
+timestamp_bucket: "1min"
+
+# Outliers & scaling
+clip_quantile: 0.995
+
+# Splitting (non-temporal, stratified by label)
+temporal: false
+stratify: true
+val_ratio: 0.15
+test_ratio: 0.15
+
+export_intermediate: false
