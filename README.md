@@ -13,10 +13,10 @@ This repository contains configurations, scripts, notebooks, and artifacts for t
 ```
 repo/
 |-- configs/                  # YAML configs (detector, policy, explainer, preprocess)
-|   |-- detector.yaml
-|   |-- policy.yaml
-|   |-- explainer.yaml
-|   \-- preprocess.yaml
+|   |-- detector.yaml         # who uses it (train.py), GPU hint, imbalance tip, and alternatives
+|   |-- policy.yaml           # threshold auto-tuning behavior, lock semantics, and doc-only knobs.
+|   |-- explainer.yaml        # TreeSHAP/RAG settings, budgets, caching, privacy masks.
+|   \-- preprocess.yaml       # hashing salt env var, safety notes, and pipeline steps.
 |-- scripts/                  # Experiment orchestration & utilities
 |   |-- run_prequential.sh    # slide windows; train + eval per window/seed
 |   |-- run_trust_study.sh    # build/analyze No-XAI vs XAI analyst study
