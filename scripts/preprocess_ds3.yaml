@@ -1,0 +1,35 @@
+# DS3: UNSW-NB15 benchmark
+seed: 42
+
+# Core columns (UNSW-NB15 style; adapt names if needed)
+time_col: ts             # if UNSW lacks a timestamp, set temporal=false (below) and any placeholder is ignored
+label_col: label         # 0/1 binary target
+id_col: event_id         # create if missing before calling prepare_data.py
+tenant_col:
+
+# Networking (leave empty unless you mapped to client_cidr earlier)
+ip_cols: []
+
+# Feature typing (example; adjust to your extracted features)
+categorical_cols: [proto, service, state]
+numeric_cols:
+  - src_bytes
+  - dst_bytes
+  - duration_ms
+
+drop_cols: []
+
+# No anonymization for public benchmark
+hash_anonymize_cols: []
+hash_salt_env_prefix: "AIDAC_SALT_"
+
+timestamp_bucket: "1min"
+clip_quantile: 0.995
+
+# Splitting: non-temporal, stratified 5-fold is done later; here we do 70/15/15 for convenience
+temporal: false
+stratify: true
+val_ratio: 0.15
+test_ratio: 0.15
+
+export_intermediate: false
