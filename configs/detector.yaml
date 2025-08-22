@@ -1,9 +1,68 @@
+# configs/detector.yaml
+# Author: William K. (University of Vienna)
+# Compatible with scripts/train.py and scripts/eval.py
+# Only the top-level `detector:` key is read by train.py.
+
 detector:
+  # ── Choose one of: xgboost | gbdt | logreg
+  #    - xgboost: requires `xgboost` (best performance, supports GPU via tree_method)
+  #    - gbdt:    sklearn GradientBoostingClassifier (fallback)
+  #    - logreg:  sklearn LogisticRegression (baseline)
   type: xgboost
+
+  # Model hyperparameters (passed through to the underlying estimator).
   params:
-    max_depth: 8
-    n_estimators: 600
-    learning_rate: 0.05
-    subsample: 0.8
-    colsample_bytree: 0.8
+    # General XGBoost settings
+    n_estimators: 600         # total boosting rounds
+    learning_rate: 0.05       # shrinkage
+    max_depth: 8              # tree depth (bias/variance tradeoff)
+    subsample: 0.8            # row sampling
+    colsample_bytree: 0.8     # feature sampling
+    min_child_weight: 1
+    reg_lambda: 1.0           # L2
+    reg_alpha: 0.0            # L1
+
+    # Performance/compat
+    n_jobs: -1                # use all CPU cores
+    max_bin: 256
+
+    # Tree builder:
+    #   "auto" or "hist"   for CPU (default),
+    #   "gpu_hist"         if GPU is available (e.g., NVIDIA T4/A100).
+    tree_method: auto
+
+    # If your labels are imbalanced, uncomment and tune:
+    # scale_pos_weight: 1.0
+
+  # Probability calibration applied after fitting (on the validation split).
+  # Options: platt (sigmoid) | none
   calibration: platt
+
+# ────────────────────────────────────────────────────────────────────────────────
+# Optional alternatives:
+#
+# (A) Gradient Boosting fallback (no XGBoost dependency)
+# detector:
+#   type: gbdt
+#   params:
+#     n_estimators: 400
+#     learning_rate: 0.05
+#     max_depth: 3
+#     subsample: 0.8
+#   calibration: platt
+#
+# (B) Logistic Regression baseline
+# detector:
+#   type: logreg
+#   params:
+#     penalty: l2
+#     C: 1.0
+#     solver: lbfgs
+#     max_iter: 2000
+#   calibration: platt
+#
+# Notes:
+# - Thresholding is handled via policy.yaml (or auto-tuned on validation by train.py).
+# - Feature selection/ordering is taken from the training CSV columns (minus id/label)
+#   unless you pass --feature-cols in the CLI.
+

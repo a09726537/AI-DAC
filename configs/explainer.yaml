@@ -1,3 +1,102 @@
+# configs/explainer.yaml
+# Author: William K. (University of Vienna)
+# Purpose: Configure inline + deferred explanations for TLL experiments.
+# Notes:
+#   - Current training/eval scripts don’t consume this file directly,
+#     but the schema mirrors what’s described in the thesis so you can
+#     wire it into your serving/XAI components.
+
 explainer:
-  method: shap_tree
-  topk: 5
+  # ── Core method
+  method: shap_tree            # options: shap_tree | shap_kernel | lime_text
+  model_type: tree             # tree | linear | neural (hints the explainer backend)
+  topk: 5                      # k features shown inline (matches paper defaults)
+  output_format: inline        # inline | deferred | both
+
+  # ── Caching: keep inline XAI within ~1ms p95 when warm
+  caching:
+    enabled: true
+    cache_dir: artifacts/xai_cache
+    max_entries: 200000
+    ttl_seconds: 604800        # 7 days
+
+  # ── Inline rendering (scorecard-style)
+  inline:
+    template: |
+      Score: {score:.3f} | Δrisk vs. threshold {threshold:.2f}
+      Top-{k} attributions:
+      {attributions}
+    attribution_format: "{rank}. {feature} = {value}  (ϕ = {phi:.3f})"
+    include_policy_rationale: true
+    show_threshold: true
+    decimals:
+      score: 3
+      phi: 3
+      threshold: 2
+
+  # ── Deferred artifact (full plots + tables)
+  deferred:
+    enabled: true
+    out_dir: artifacts/xai_deferred
+    artifacts:
+      - shap_bar
+      - shap_beeswarm
+      - force_plot
+      - contrastive_examples
+    contrastive:
+      neighbors: 25
+      topk_diff: 5
+
+  # ── RAG grounding for narratives/citations
+  rag:
+    enabled: true
+    index_type: faiss_flat
+    index_path: artifacts/rag/faiss_flat.index
+    embedding_model: "all-MiniLM-L6-v2"   # or any local embedder you use
+    chunk_size_tokens: 512
+    max_chunks: 50000
+    topk: 5
+    cite_format: "[{source_id}]"
+    sources_manifest: artifacts/rag/sources.json
+
+  # ── Faithfulness / stability gates (reported in paper)
+  faithfulness_checks:
+    enabled: true
+    deletion_auc_gate: 0.30        # lower is better
+    sufficiency_gap_gate: 0.12     # lower is better
+    comprehensiveness_gap_gate: 0.15
+    stability_jaccard_gate: 0.75   # higher is better
+    sample_size: 256               # events per periodic audit
+
+  # ── Privacy and redaction (GDPR-aware)
+  privacy:
+    mask_fields:
+      - user_role
+      - db
+      - schema
+      - object
+      - client_cidr
+    allow_raw_values: false
+    show_feature_aliases: true      # display masked/aliased names instead of raw
+
+  # ── Plots and reports (paths are examples; adjust as needed)
+  reporting:
+    pr_curves_path: artifacts/plots/pr_curves/
+    calibration_plots_path: artifacts/plots/calibration/
+    shap_summary_path: artifacts/plots/shap_summary/
+
+  # ── Operational budgets (informational; for serving/XAI gatekeepers)
+  budgets:
+    inline_p95_overhead_ms: 1.0     # expectation under cache hit
+    total_slo_ms: 25                # overall online SLO budget (paper)
+
+  # ── Reproducibility
+  reproducibility:
+    seed: 42
+    log_path: artifacts/xai_runs/log.jsonl
+
+  # ── Hardware hints (optional)
+  hardware:
+    device: cpu                     # cpu | cuda
+    num_workers: 2
+

@@ -1,2 +1,47 @@
-threshold: 0.5
+# configs/policy.yaml
+# Author: William K. (University of Vienna)
+# NOTE:
+# - train.py reads this file and, unless `lock_threshold: true`, auto-tunes a
+#   validation threshold and writes a resolved copy to:
+#   artifacts/.../policy.resolved.yaml
+# - eval.py prefers the resolved file; if missing, it falls back to this one.
+
+# If true, keep the threshold below and DO NOT auto-tune on validation.
 lock_threshold: false
+
+# Default threshold used if lock_threshold:true or if auto-tuning is skipped.
+threshold: 0.50
+
+# ────────────────────────────────────────────────────────────────────────────────
+# Optional (informational / forward-compatibility fields; current scripts ignore
+# these but they document intended serving policy knobs).
+
+# Per-dataset illustrative overrides (ignored by scripts; for documentation).
+overrides:
+  DS1:
+    threshold: 0.62
+  DS2:
+    threshold: 0.55
+  DS3:
+    threshold: 0.48
+
+# Target operating points (informational).
+targets:
+  tpr: [0.80, 0.90]   # desired recall levels to consider
+  max_fpr: 0.15       # acceptable false-positive rate cap
+
+# Alerting budget (informational).
+alerting:
+  max_alerts_per_hour: 300
+  action_cost_proxy: 1.0
+
+# Feature masking / gating (placeholder for Loop-2 style policies).
+feature_masks:
+  enabled: false
+  masks: []           # e.g., ["ip_*", "tenant_T03"]
+
+# Audit & governance (informational).
+audit:
+  immutable_logging: true
+  version_binding: ["model_ver", "policy_ver", "feat_ver"]
+

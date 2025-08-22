@@ -1,5 +1,31 @@
+# configs/preprocess.yaml
+# Author: William K. (University of Vienna)
+# Consumed keys (by scripts/prepare_data.py):
+#   - time_bucket_minutes
+#   - clip_quantile
+#   - standardize
+#   - map_ip_to_cidr
+#   - hash_salt_env
+#
+# Notes:
+# - Set the environment variable ANON_SALT before running to enable
+#   irreversible hashing of the ID column (e.g., event_id).
+#   Example:  export ANON_SALT="your-secret-salt"
+
+# Floor timestamps to this bucket (minutes). The script floors to minute-level.
 time_bucket_minutes: 1
+
+# Upper-quantile clipping for numeric features to curb outliers.
 clip_quantile: 0.995
+
+# Standardize numeric columns using training-set statistics.
 standardize: true
+
+# Map client IPs to CIDR buckets for privacy-preserving features.
+# The script maps to /24 buckets when a 'client_cidr' column is present.
 map_ip_to_cidr: "/24"
+
+# Environment variable name that holds the secret salt for SHA-256 hashing.
+# If set, the script hashes the ID column values using this salt.
 hash_salt_env: "ANON_SALT"
+
