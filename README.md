@@ -97,7 +97,7 @@ bash scripts/run_trust_study.sh generate \
   --topk 5 \
   --outdir artifacts/trust_study/DS1_W5_seed1
 
-# Analyze collected responses
+## Analyze collected responses
 bash scripts/run_trust_study.sh analyze \
   --responses-dir artifacts/trust_study/DS1_W5_seed1/responses \
   --outdir        artifacts/trust_study/DS1_W5_seed1
