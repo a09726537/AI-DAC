@@ -47,7 +47,6 @@ conda activate rdbms-xai
 pip install -r requirements.txt -r requirements-dev.txt
 
 ```
-
 ## Common Tasks
 
 - Run prequential pipeline:
