@@ -1,0 +1,51 @@
+# configs/preprocess.yaml
+# AI-DAC preprocessing configuration
+
+# --- Reproducibility ---
+seed: 42
+
+# --- Core columns ---
+time_col: ts            # ISO 8601 or epoch seconds; will be UTC-parsed then bucketed
+label_col: label        # {0,1}
+id_col: event_id
+tenant_col: tenant      # optional; may be absent in DS3 (adv/synth)
+
+# --- Network/IP handling ---
+ip_cols: [client_cidr]  # mapped to /24 CIDR
+
+# --- Feature typing ---
+categorical_cols:
+  - user_role
+  - db
+  - schema
+  - object
+  - op_type
+
+numeric_cols:
+  - rows_affected
+  - duration_ms
+
+# Columns to drop AFTER anonymization/encoding/scaling (kept in CSV if omitted here)
+# Typical choice: keep id/time/tenant/label for joins & analysis; drop none here.
+drop_cols: []
+
+# --- Anonymization (irreversible) ---
+# Columns hashed with SHA-256 and per-field salts from environment variables.
+hash_anonymize_cols: [user_role, db, schema, object]
+hash_salt_env_prefix: "AIDAC_SALT_"  # expects env vars like AIDAC_SALT_USER_ROLE, AIDAC_SALT_DB, ...
+
+# --- Temporal normalization ---
+timestamp_bucket: "1min"  # pandas offset alias
+
+# --- Outlier handling & scaling ---
+clip_quantile: 0.995      # clip numeric features at train 99.5th percentile
+# Standardization (z-score) uses train-only mean/std — automatically handled by script.
+
+# --- Splitting ---
+temporal: true            # DS1/DS2 are temporal; DS3 can also use temporal for consistency
+stratify: true            # only used if temporal=false and label is present
+val_ratio: 0.15
+test_ratio: 0.15
+
+# --- Debug/forensics ---
+export_intermediate: false  # set true to also write *_raw.csv (pre-OHE/scale) for audits
