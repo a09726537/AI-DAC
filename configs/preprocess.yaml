@@ -1,0 +1,5 @@
+time_bucket_minutes: 1
+clip_quantile: 0.995
+standardize: true
+map_ip_to_cidr: "/24"
+hash_salt_env: "ANON_SALT"

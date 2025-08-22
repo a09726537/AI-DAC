@@ -1,5 +1,9 @@
 detector:
-  type: bilstm
-  hidden: 128
-  layers: 2
-  dropout: 0.3
+  type: xgboost
+  params:
+    max_depth: 8
+    n_estimators: 600
+    learning_rate: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+  calibration: platt

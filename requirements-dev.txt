@@ -1,4 +1,4 @@
-pytest
-flake8
-black
-isort
+pytest>=8.0.0
+black>=24.0.0
+flake8>=7.0.0
+isort>=5.13.0

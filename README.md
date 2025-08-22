@@ -10,54 +10,51 @@ This repository contains configurations, scripts, notebooks, and artifacts for t
 
 ## Contents
 
-
-
 ```
-epo/
-|-- configs/ # YAML configs (detector, policy, explainer, preprocess)
-| |-- detector.yaml
-| |-- policy.yaml
-| |-- explainer.yaml
-| -- preprocess.yaml
-|-- scripts/ # Experiment orchestration & utilities
-| |-- run_prequential.sh # slide windows; train + eval per window/seed
-| |-- run_trust_study.sh # build/analyze No-XAI vs XAI analyst study
-| |-- prepare_data.py # preprocessing + anonymization pipeline
-| |-- train.py # train + (optional) Platt calib + val thresholding
-| |-- eval.py # evaluate model; metrics + predictions
-| |-- measure_latency.py # p50/p95 wall-clock latency, batch=1
-| -- replay_artifacts.py # integrity/replay checks for decisions/artifacts
-|-- notebooks/ # Jupyter (analysis, plots, paper figs)
-|-- data/ # DS2/DS3 (public) placeholders; DS1 is access-controlled
-|-- tests/ # Unit tests (pytest)
-|-- .github/workflows/ # CI workflows (lint/tests)
+repo/
+|-- configs/                  # YAML configs (detector, policy, explainer, preprocess)
+|   |-- detector.yaml
+|   |-- policy.yaml
+|   |-- explainer.yaml
+|   \-- preprocess.yaml
+|-- scripts/                  # Experiment orchestration & utilities
+|   |-- run_prequential.sh    # slide windows; train + eval per window/seed
+|   |-- run_trust_study.sh    # build/analyze No-XAI vs XAI analyst study
+|   |-- prepare_data.py       # preprocessing + anonymization pipeline
+|   |-- train.py              # train + (optional) Platt calib + val thresholding
+|   |-- eval.py               # evaluate model; metrics + predictions
+|   |-- measure_latency.py    # p50/p95 wall-clock latency, batch=1
+|   \-- replay_artifacts.py   # integrity/replay checks for decisions/artifacts
+|-- notebooks/                # Jupyter (analysis, plots, paper figs)
+|-- data/                     # DS2/DS3 (public) placeholders; DS1 is access-controlled
+|-- tests/                    # Unit tests (pytest)
+|-- .github/workflows/        # CI workflows (lint/tests)
 |-- LICENSE
--- README.md
+\-- README.md
 ```
-
 
 ---
 
 ## Quickstart
 
 ```bash
-# Environment
 conda create -n rdbms-xai python=3.11 -y
 conda activate rdbms-xai
 pip install -r requirements.txt -r requirements-dev.txt
-
 ```
-## Common Tasks
 
-- Run prequential pipeline:
+### Prepare data
 
-  ```bash
-  python scripts/prepare_data.py \
+```bash
+python scripts/prepare_data.py \
   --input data/raw/postgres_logs.csv \
   --output data/DS1_processed/all.csv \
   --config configs/preprocess.yaml
+```
 
-## Run the prequential pipeline
+### Run the prequential pipeline
+
+```bash
 bash scripts/run_prequential.sh \
   --dataset DS2 \
   --source-csv data/DS2_processed/all.csv \
@@ -67,12 +64,11 @@ bash scripts/run_prequential.sh \
   --detector-config configs/detector.yaml \
   --policy-config configs/policy.yaml \
   --outdir artifacts/prequential/DS2
-## Outputs per window/seed go to:
-artifacts/prequential/DS2/
-  windows/Wk/{train,val,test}.csv
-  runs/Wk/seed_S/{model.pkl, policy.resolved.yaml, train_metrics.json, metrics.json, predictions.csv, ...}
-  aggregate_metrics.csv
-## Evaluate a trained run
+```
+
+### Evaluate a trained run
+
+```bash
 python scripts/eval.py \
   --test artifacts/prequential/DS2/windows/W5/test.csv \
   --model-dir artifacts/prequential/DS2/runs/W5/seed_1 \
@@ -80,48 +76,66 @@ python scripts/eval.py \
   --id-col event_id --label-col label \
   --out-json artifacts/prequential/DS2/runs/W5/seed_1/metrics.json \
   --out-csv  artifacts/prequential/DS2/runs/W5/seed_1/predictions.csv
-##  Measure online latency (batch=1)
+```
+
+### Measure online latency (batch=1)
+
+```bash
 python scripts/measure_latency.py \
   --model-dir artifacts/prequential/DS2/runs/W5/seed_1 \
+  --sample-csv artifacts/prequential/DS2/windows/W5/test.csv \
+  --id-col event_id --label-col label \
   --n-warmup 100 --n-runs 10000 --device cpu
-## Run the trust/XAI user study
-# Generate study packs (score-only vs. score+top-k SHAP), counterbalanced
-bash scripts/run_trust_study.sh generate \
-  --dataset DS1 \
-  --predictions artifacts/prequential/DS1/runs/W5/seed_1/predictions.csv \
-  --id-col event_id --label-col label --score-col score \
-  --n 60 --analysts "a01,a02,a03,a04" \
-  --policy-config configs/policy.yaml \
-  --shap-csv artifacts/prequential/DS1/runs/W5/seed_1/predictions_shap.csv \
-  --topk 5 \
-  --outdir artifacts/trust_study/DS1_W5_seed1
+```
 
-## Analyze collected responses
-bash scripts/run_trust_study.sh analyze \
-  --responses-dir artifacts/trust_study/DS1_W5_seed1/responses \
-  --outdir        artifacts/trust_study/DS1_W5_seed1
+---
 
+## Configuration Overview
+
+- `configs/detector.yaml` (example)
+  ```yaml
+  detector:
+    type: xgboost
+    params:
+      max_depth: 8
+      n_estimators: 600
+      learning_rate: 0.05
+      subsample: 0.8
+      colsample_bytree: 0.8
+    calibration: platt
+  ```
+- `configs/policy.yaml`
+  ```yaml
+  threshold: 0.5
+  lock_threshold: false
+  ```
+- `configs/preprocess.yaml`
+  ```yaml
+  time_bucket_minutes: 1
+  clip_quantile: 0.995
+  standardize: true
+  map_ip_to_cidr: "/24"
+  hash_salt_env: "ANON_SALT"
   ```
 
-- Measure latency:
+---
 
-  ```bash
-  python scripts/measure_latency.py
-  ```
+## Reproducibility
 
-- Run tests and lint:
+- Fixed seeds; version-pinned dependencies; artifact checksums.
+- Artifacts per run: `model.pkl`, `policy.resolved.yaml`, `train_metrics.json`, `model_meta.json`, `feature_cols.json`, `metrics.json`, `predictions.csv`.
+- Replay: `scripts/replay_artifacts.py` re-scores immutable decisions for audit.
 
-  ```bash
-  pytest -q
-  flake8
-  black --check .
-  isort --check-only .
-  ```
+---
 
-## CI Badge
+## Data
 
-Replace `OWNER/REPO` in the badge URL with your GitHub org and repo name.
+- **DS1** (enterprise PostgreSQL logs): access-controlled; anonymized.
+- **DS2** (TPC+inj): public, staged drift.
+- **DS3** (adv/synth): public MAD-GAN sequences.
 
-## License
+---
 
-MIT License (see LICENSE).
+## Code & Availability
+
+- **Repository:** https://github.com/a09726537/AI-DAC (MIT License)

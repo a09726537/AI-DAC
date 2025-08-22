@@ -1,4 +1,2 @@
-policy:
-  algorithm: dqn
-  gamma: 0.99
-  replay: 100000
+threshold: 0.5
+lock_threshold: false
