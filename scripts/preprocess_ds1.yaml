@@ -1,0 +1,37 @@
+# DS1: Enterprise PostgreSQL logs (governed, real-world)
+seed: 42
+
+# Core columns
+time_col: ts
+label_col: label
+id_col: event_id
+tenant_col: tenant
+
+# Networking
+ip_cols: [client_cidr]
+
+# Feature typing
+categorical_cols: [user_role, db, schema, object, op_type]
+numeric_cols: [rows_affected, duration_ms]
+
+# Keep join/audit columns; drop none here
+drop_cols: []
+
+# Anonymization (irreversible, per-field salted)
+hash_anonymize_cols: [user_role, db, schema, object]
+hash_salt_env_prefix: "AIDAC_SALT_"
+
+# Temporal normalization
+timestamp_bucket: "1min"
+
+# Outliers & scaling (train-only stats)
+clip_quantile: 0.995
+
+# Splitting
+temporal: true      # time-ordered split (70/15/15 via script defaults)
+stratify: true      # ignored when temporal=true
+val_ratio: 0.15
+test_ratio: 0.15
+
+# Forensics
+export_intermediate: false
