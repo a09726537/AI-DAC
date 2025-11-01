@@ -1,0 +1,203 @@
+[
+  {
+    "id": "q001",
+    "query": "show latency breakdown for the RAG pipeline by stage (retrieval, re-rank, planning, execution) for the last 24 hours",
+    "context": "performance, latency, monitoring",
+    "filters": {
+      "time_from": "now-24h",
+      "time_to": "now",
+      "domain": "ops"
+    },
+    "relevant_docs": [
+      "doc:perf:rag-latency-model",
+      "doc:ops:rag-metrics-exporter",
+      "doc:arch:rag-pipeline"
+    ]
+  },
+  {
+    "id": "q002",
+    "query": "list all SQL plans that were rejected by guardrails because of missing time filter",
+    "context": "sql-planner, guardrails, safety",
+    "filters": {
+      "policy": "sql_guardrails",
+      "violation": "missing_time_bound"
+    },
+    "relevant_docs": [
+      "doc:spec:sql-guardrails",
+      "doc:spec:policy-tests",
+      "doc:logs:planner-violations"
+    ]
+  },
+  {
+    "id": "q003",
+    "query": "which embedding model version is currently used for the RAG index?",
+    "context": "model-card, embeddings, versioning",
+    "filters": {
+      "component": "embedding",
+      "artifact": "rag/models/embeddings.md"
+    },
+    "relevant_docs": [
+      "doc:rag:models:embeddings",
+      "doc:rag:index:build",
+      "doc:manifest:2025-10-21"
+    ]
+  },
+  {
+    "id": "q004",
+    "query": "give me the SHA-256 checksums of the core RAG artifacts defined in the experiment manifest",
+    "context": "reproducibility, integrity",
+    "filters": {
+      "manifest": "rag/manifests/index_manifest.json"
+    },
+    "relevant_docs": [
+      "doc:manifest:rag-assets",
+      "doc:table:appC-rag-assets",
+      "doc:governance:integrity"
+    ]
+  },
+  {
+    "id": "q005",
+    "query": "retrieve the policy-pass rate and safety violation rate for the SQL planner on the validation split",
+    "context": "evaluation, safety, sql-planner",
+    "filters": {
+      "dataset": "validation",
+      "metric_group": "planning"
+    },
+    "relevant_docs": [
+      "doc:eval:planner-metrics",
+      "doc:eval:rag-validation",
+      "doc:policy:sql-safety"
+    ]
+  },
+  {
+    "id": "q006",
+    "query": "show nDCG@10 and Recall@10 for the RAG evaluation set defined in rag/queries.json",
+    "context": "retrieval-metrics",
+    "filters": {
+      "metric": ["ndcg@10", "recall@10"]
+    },
+    "relevant_docs": [
+      "doc:eval:retrieval-metrics",
+      "doc:dataset:rag-queries",
+      "doc:arch:retriever"
+    ]
+  },
+  {
+    "id": "q007",
+    "query": "which tables are in the allow-list for read-only SQL generation?",
+    "context": "sql-allowlist, schema, security",
+    "filters": {
+      "policy": "sql_allowlist"
+    },
+    "relevant_docs": [
+      "doc:spec:sql-allowlist",
+      "doc:rag:sql-guardrails.jinja",
+      "doc:governance:read-only-posture"
+    ]
+  },
+  {
+    "id": "q008",
+    "query": "explain how domain shift was tested across financial and operational corpora for the RAG system",
+    "context": "domain-shift, ablations",
+    "filters": {
+      "experiment": "domain_shift_v1"
+    },
+    "relevant_docs": [
+      "doc:ablations:domain-shift",
+      "doc:dataset:financial",
+      "doc:dataset:operational"
+    ]
+  },
+  {
+    "id": "q009",
+    "query": "list the RAG executions whose citations did not match the retrieved contexts",
+    "context": "citation-fidelity, audit",
+    "filters": {
+      "violation": "citation_mismatch"
+    },
+    "relevant_docs": [
+      "doc:policy:citation",
+      "doc:logs:citation-audit",
+      "doc:eval:citation-fidelity"
+    ]
+  },
+  {
+    "id": "q010",
+    "query": "what is the configured maximum LIMIT (L_max) for generated SQL queries?",
+    "context": "sql-limits, safety",
+    "filters": {
+      "policy": "sql_guardrails"
+    },
+    "relevant_docs": [
+      "doc:spec:sql-guardrails",
+      "doc:config:planner",
+      "doc:manifest:rag-policies"
+    ]
+  },
+  {
+    "id": "q011",
+    "query": "get the list of RAG assets that were updated in commit c8b71f2",
+    "context": "provenance, git",
+    "filters": {
+      "commit": "c8b71f2"
+    },
+    "relevant_docs": [
+      "doc:manifest:rag-assets",
+      "doc:git:changelog:c8b71f2",
+      "doc:provenance:2025-10-21"
+    ]
+  },
+  {
+    "id": "q012",
+    "query": "show latency P50 and P95 for the re-ranker stage only, under concurrency = 8",
+    "context": "performance, reranker",
+    "filters": {
+      "stage": "reranker",
+      "concurrency": 8
+    },
+    "relevant_docs": [
+      "doc:perf:reranker-bench",
+      "doc:perf:rag-latency-model",
+      "doc:ops:perf-dashboards"
+    ]
+  },
+  {
+    "id": "q013",
+    "query": "how is PII removed or anonymized before documents are indexed?",
+    "context": "pii, governance, gdpr",
+    "filters": {
+      "governance": "pii_filtering"
+    },
+    "relevant_docs": [
+      "doc:governance:pii",
+      "doc:config:preprocessing",
+      "doc:security:data-minimisation"
+    ]
+  },
+  {
+    "id": "q014",
+    "query": "list all policy tests in rag/policy/policy_tests.yaml and mark which ones passed",
+    "context": "policy-tests, sql-safety",
+    "filters": {
+      "policy_file": "rag/policy/policy_tests.yaml"
+    },
+    "relevant_docs": [
+      "doc:policy:sql-safety",
+      "doc:policy:tests",
+      "doc:logs:policy-results"
+    ]
+  },
+  {
+    "id": "q015",
+    "query": "what was the effect size (Cliff's delta) when enabling the cross-encoder re-ranker?",
+    "context": "statistics, ablations",
+    "filters": {
+      "experiment": "reranker_on_vs_off"
+    },
+    "relevant_docs": [
+      "doc:ablations:reranker",
+      "doc:eval:stats",
+      "doc:analysis:effect-sizes"
+    ]
+  }
+]

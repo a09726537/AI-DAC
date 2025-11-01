@@ -1,0 +1,162 @@
+# ============================================================
+# index.yaml
+# Retrieval-Augmented Generation (RAG) Index Specification
+# for AI-DAC Framework — Commit-Pinned and Reproducible
+# ============================================================
+
+version: 1.0
+description: >
+  Retrieval index configuration for AI-DAC RAG subsystem.
+  This file defines corpus sources, preprocessing, embedding, and
+  indexing parameters. All paths are commit-pinned to guarantee
+  reproducibility and auditability.
+
+# ---------------------------------------------------------------------
+# 1. Corpus Specification
+# ---------------------------------------------------------------------
+corpus:
+  name: ai_dac_docs
+  description: |
+    Consolidated corpus used for RAG retrieval, containing:
+      - anonymized SQL security logs
+      - AI-DAC design documentation
+      - benchmark datasets (UNSW-NB15 excerpts)
+      - explainability reports
+  sources:
+    - path: data/corpus/sql_security/
+      type: text
+      include: ["*.txt", "*.md"]
+    - path: data/corpus/docs/
+      type: markdown
+      include: ["*.md"]
+    - path: data/corpus/research/
+      type: pdf
+      include: ["*.pdf"]
+  preprocessing:
+    normalize_unicode: true
+    remove_stopwords: true
+    lowercase: true
+    sentence_split: true
+    max_length: 512  # tokens per chunk
+    overlap: 64      # tokens overlap between chunks
+  hashing:
+    algorithm: sha256
+    anonymize_ids: true
+
+# ---------------------------------------------------------------------
+# 2. Embedding Model
+# ---------------------------------------------------------------------
+embedding:
+  model: sentence-transformers/all-mpnet-base-v2
+  provider: huggingface
+  dimension: 768
+  batch_size: 32
+  device: auto
+  normalize: true
+  pooling: mean
+  version: "v1.2.0"
+  commit: "9f32c7a"
+  notes: |
+    Embeddings are L2-normalized and stored in float32 precision.
+    The commit hash and model card are pinned for reproducibility.
+
+# ---------------------------------------------------------------------
+# 3. Index Backend
+# ---------------------------------------------------------------------
+index:
+  type: hybrid         # options: bm25 | dense | hybrid
+  dense_backend: faiss # options: faiss | annoy | milvus
+  metric: cosine
+  faiss:
+    factory: "FlatIP"
+    nprobe: 16
+  bm25:
+    k1: 1.5
+    b: 0.75
+    tokenizer: nltk
+  storage:
+    path: rag/index_store/
+    format: parquet
+    compress: zstd
+  shards: 4
+  max_docs_per_shard: 100000
+  metadata:
+    include:
+      - doc_id
+      - source
+      - timestamp
+      - sha256
+
+# ---------------------------------------------------------------------
+# 4. Re-ranking Configuration
+# ---------------------------------------------------------------------
+reranker:
+  model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  provider: huggingface
+  version: "v1.0.3"
+  batch_size: 8
+  commit: "bc28fa9"
+  depth: 50   # re-rank top-50 retrieved passages
+  normalize: true
+
+# ---------------------------------------------------------------------
+# 5. Evaluation Parameters
+# ---------------------------------------------------------------------
+evaluation:
+  metrics: [ndcg@10, recall@10, precision@10]
+  validation_split: 0.2
+  random_seed: 42
+  bootstraps: 1000
+  thresholds:
+    relevance_min: 0.3
+    similarity_min: 0.65
+
+# ---------------------------------------------------------------------
+# 6. Security and Governance
+# ---------------------------------------------------------------------
+governance:
+  pii_filtering: true
+  pii_method: hmac_sha256
+  pii_salt_ref: "env:PII_SALT"
+  access_policy: read-only
+  compliance: [GDPR, NIST-800-53, FAIR]
+  checksum_verification: true
+  audit_trail: true
+
+# ---------------------------------------------------------------------
+# 7. Provenance Metadata
+# ---------------------------------------------------------------------
+provenance:
+  created_by: "AI-DAC build pipeline"
+  created_on: "2025-10-21T10:00:00Z"
+  software_env:
+    python: "3.10.14"
+    libraries:
+      faiss: "1.8.0"
+      sentence-transformers: "2.2.2"
+      nltk: "3.9.1"
+  commit_hash: "c8b71f2"
+  manifest_path: "rag/manifests/index_manifest.json"
+  integrity_hash: "sha256:PLACEHOLDER_HASH"
+
+# ---------------------------------------------------------------------
+# 8. Validation Rules
+# ---------------------------------------------------------------------
+validation:
+  schema_version: "1.0"
+  required_fields:
+    - corpus
+    - embedding.model
+    - index.type
+    - governance.access_policy
+  checks:
+    - name: "embedding_model_exists"
+      command: "huggingface-cli repo info {{ embedding.model }}"
+    - name: "path_integrity"
+      command: "sha256sum -c manifests/checksums.txt"
+    - name: "license_compliance"
+      command: "python scripts/verify_licenses.py"
+
+# ============================================================
+# End of index.yaml
+# ============================================================

@@ -1,0 +1,161 @@
+{# ============================================================
+  sql_guardrails.jinja
+  Guardrailed, SELECT-only SQL generation template for AI-DAC RAG
+  Inputs (expected):
+    - tables: list of allowed tables (strings)
+    - columns_by_table: {table: [allowed_cols...]}
+    - time_column: name of the timestamp/datetime column to bound queries
+    - time_from, time_to: ISO strings or DB-friendly timestamps
+    - limit_max: integer, hard upper bound
+    - user_query: original natural-language question
+    - retrieved_contexts: list of passages/docs retrieved by RAG
+    - db_dialect: "postgres" | "mssql" | "mysql" | ...
+    - policy: {deny_schemas: [], deny_tables: [], deny_columns: []}
+  Policy rules:
+    1. SELECT-only
+    2. FROM in allowed tables only
+    3. WHERE must include time bounding
+    4. LIMIT must be <= limit_max
+    5. No DDL/DML (CREATE / DROP / ALTER / INSERT / UPDATE / DELETE / MERGE / EXEC / CALL)
+=============================================================== #}
+{%- set NL = '\n' -%}
+{%- macro comma_join(list) -%}
+    {{- (', ' ~ NL ~ '        ') . join(list) if list|length > 3 else list|join(', ') -}}
+{%- endmacro -%}
+{%- macro safe_ident(name) -%}
+    {# basic hardening — you can extend with regex in Python side #}
+    {{ name | replace(';','') | replace('--','') | replace('/*','') | replace('*/','') }}
+{%- endmacro -%}
+
+{# ------------------------------------------------------------------
+   1. Derive candidate table and column set from retrieved contexts
+   ------------------------------------------------------------------ #}
+{# If the planner already resolved a target table, it should be passed in;
+   otherwise we fall back to the first allowed table. #}
+{%- set target_table = target_table
+    if target_table is defined and target_table in tables
+    else (tables[0] if tables|length > 0 else 'public.safe_table')
+-%}
+
+{%- set allowed_cols = columns_by_table.get(target_table, []) -%}
+{%- if allowed_cols|length == 0 -%}
+  {# Hard fallback: do not generate SQL without an explicit allow-list #}
+  -- POLICY VIOLATION: no allowed columns defined for {{ target_table }}
+  SELECT 1 WHERE 1=0;
+  {%- exit -%}
+{%- endif -%}
+
+{# ------------------------------------------------------------------
+   2. Enforce time bounding
+   ------------------------------------------------------------------ #}
+{%- if time_column is not defined or not time_column %}
+  {%- set time_column = 'event_time' %}
+{%- endif %}
+
+{%- if time_from is not defined or not time_from %}
+  {%- set time_from = 'CURRENT_DATE - INTERVAL \'7 days\'' %}
+{%- endif %}
+
+{%- if time_to is not defined or not time_to %}
+  {%- set time_to = 'CURRENT_TIMESTAMP' %}
+{%- endif %}
+
+{# ------------------------------------------------------------------
+   3. Enforce LIMIT
+   ------------------------------------------------------------------ #}
+{%- set limit_max = limit_max if limit_max is defined else 200 -%}
+{%- set limit_req = limit if limit is defined else 100 -%}
+{%- if limit_req > limit_max %}
+  {%- set limit_req = limit_max %}
+{%- endif %}
+
+{# ------------------------------------------------------------------
+   4. Deny-lists (schemas/tables/columns)
+   ------------------------------------------------------------------ #}
+{%- set deny_schemas = policy.deny_schemas if policy is defined and policy.deny_schemas is defined else [] -%}
+{%- set deny_tables  = policy.deny_tables  if policy is defined and policy.deny_tables  is defined else [] -%}
+{%- set deny_columns = policy.deny_columns if policy is defined and policy.deny_columns is defined else [] -%}
+
+{%- if target_table in deny_tables %}
+  -- POLICY VIOLATION: target table {{ target_table }} is denied
+  SELECT 1 WHERE 1=0;
+  {%- exit -%}
+{%- endif %}
+
+{# ------------------------------------------------------------------
+   5. Build SELECT list (only allowed + not denied)
+   ------------------------------------------------------------------ #}
+{%- set select_cols = [] -%}
+{%- for c in allowed_cols %}
+  {%- if c not in deny_columns %}
+    {%- do select_cols.append(c) %}
+  {%- endif %}
+{%- endfor %}
+
+{%- if select_cols|length == 0 %}
+  -- POLICY VIOLATION: all columns denied for {{ target_table }}
+  SELECT 1 WHERE 1=0;
+  {%- exit -%}
+{%- endif %}
+
+{# ------------------------------------------------------------------
+   6. Optional: derive filters from retrieved context
+       (this stays conservative — user_query is NOT injected directly)
+   ------------------------------------------------------------------ #}
+{%- set extra_filters = [] -%}
+{# Example: if contexts mention "status = 'active'" or "tenant_id=..." you
+   would extract them in Python and pass as structured filters, e.g.:
+   filters = [{"col":"status","op":"=","val":"active"}]
+   Here we just render what we receive. #}
+{%- if filters is defined and filters %}
+  {%- for f in filters %}
+    {%- if f.col in select_cols %}
+      {%- if f.op in ['=','<>','>','>=','<','<=','LIKE','ILIKE','IN'] %}
+        {%- if f.op in ['IN'] and f.val is iterable %}
+          {%- set _cond = safe_ident(f.col) ~ ' IN (' ~ f.val|map('tojson')|join(', ') ~ ')' %}
+        {%- else %}
+          {%- set _cond = safe_ident(f.col) ~ ' ' ~ f.op ~ ' ' ~ f.val|tojson %}
+        {%- endif %}
+        {%- do extra_filters.append(_cond) %}
+      {%- endif %}
+    {%- endif %}
+  {%- endfor %}
+{%- endif %}
+
+{# ------------------------------------------------------------------
+   7. FINAL QUERY (SELECT-only, parametric)
+   ------------------------------------------------------------------ #}
+-- ------------------------------------------------------------------
+-- AUTO-GENERATED, GUARDRAILED SQL (read-only)
+-- Source question (for audit): {{ user_query | replace('--','') }}
+-- Retrieved contexts (ids): {%- if retrieved_contexts is defined -%}
+    {%- for ctx in retrieved_contexts -%}
+        {{ ctx.id if ctx.id is defined else loop.index0 }}{{ ', ' if not loop.last }}
+    {%- endfor -%}
+  {%- else -%} none {%- endif -%}
+-- ------------------------------------------------------------------
+SELECT
+    {{ comma_join(select_cols) }}
+FROM
+    {{ safe_ident(target_table) }}
+WHERE
+    {{ safe_ident(time_column) }} BETWEEN {{ time_from }} AND {{ time_to }}
+    {%- if extra_filters %}
+    AND (
+        {{ extra_filters|join(NL ~ '        AND ') }}
+    )
+    {%- endif %}
+{%- if order_by is defined and order_by in select_cols %}
+ORDER BY {{ safe_ident(order_by) }} {{ 'DESC' if order_desc else 'ASC' }}
+{%- else %}
+ORDER BY {{ safe_ident(time_column) }} DESC
+{%- endif %}
+LIMIT {{ limit_req }};
+-- ------------------------------------------------------------------
+-- POLICY CHECKS (to be enforced in caller):
+-- 1. No DDL/DML keywords present
+-- 2. Table is in allow-list
+-- 3. Columns are in allow-list
+-- 4. LIMIT <= {{ limit_max }}
+-- 5. Time-bounded
+-- ------------------------------------------------------------------
