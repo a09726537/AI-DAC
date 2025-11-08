@@ -1,6 +1,7 @@
 # MAD-GAN Lab
 
-Minimal scaffold to experiment with Multivariate Anomaly Detection GAN on SQL / system logs.
+MAD-GAN Lab is a lightweight research environment for experimenting with Multivariate Anomaly Detection using Generative Adversarial Networks (MAD-GAN).
+This project demonstrates how generative models can detect irregular patterns in SQL logs and system metrics, forming the foundation for proactive database security and intelligent intrusion detection.
 
 ## Quick start
 ```bash
