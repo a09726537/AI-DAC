@@ -1,141 +1,93 @@
-# AI-DAC (RDBMS-XAI) — Experiments & Reproducibility
+# AI-DAC — Reproducibility Package
 
-This repository contains configurations, scripts, notebooks, and artifacts for the thesis experiments on **Triple Loop Learning (TLL)** and explainability for database/security anomaly detection.
+This repository contains the reproducibility package for the doctoral thesis:
 
-[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+**Lifecycle-Aware Database Cybersecurity: A Triple-Loop Learning Approach**  
+**William Kandolo**, University of Vienna, Doctoral Thesis, 2026.
 
-> **Author:** William K., University of Vienna
-
----
-
-## Contents
-
-```
-repo/
-|-- configs/                  # YAML configs (detector, policy, explainer, preprocess)
-|   |-- detector.yaml         # who uses it (train.py), GPU hint, imbalance tip, and alternatives
-|   |-- policy.yaml           # threshold auto-tuning behavior, lock semantics, and doc-only knobs.
-|   |-- explainer.yaml        # TreeSHAP/RAG settings, budgets, caching, privacy masks.
-|   \-- preprocess.yaml       # hashing salt env var, safety notes, and pipeline steps.
-|-- scripts/                  # Experiment orchestration & utilities
-|   |-- run_prequential.sh    # slide windows; train + eval per window/seed
-|   |-- run_trust_study.sh    # build/analyze No-XAI vs XAI analyst study
-|   |-- prepare_data.py       # preprocessing + anonymization pipeline
-|   |-- train.py              # train + (optional) Platt calib + val thresholding
-|   |-- eval.py               # evaluate model; metrics + predictions
-|   |-- measure_latency.py    # p50/p95 wall-clock latency, batch=1
-|   \-- replay_artifacts.py   # integrity/replay checks for decisions/artifacts
-|-- notebooks/                # Jupyter (analysis, plots, paper figs)
-|-- data/                     # DS2/DS3 (public) placeholders; DS1 is access-controlled
-|-- tests/                    # Unit tests (pytest)
-|-- .github/workflows/        # CI workflows (lint/tests)
-|-- LICENSE
-\-- README.md
-```
+Repository: <https://github.com/a09726537/AI-DAC>
 
 ---
 
-## Quickstart
+## Purpose
+
+This repository supports the reproduction and audit of the controlled laboratory results reported in the dissertation.
+
+The package contains dataset manifests, evaluation scripts, generated result files, audit records, metric registers, and the controlled SQL train, validation, and test partitions used to support the AI-DAC evaluation.
+
+The repository is intended to make the thesis results inspectable, repeatable, and bounded to the documented laboratory configuration. It does **not** claim production-scale generalization across all enterprise database environments.
+
+---
+
+## Thesis Context
+
+AI-DAC stands for **Artificial Intelligence–Driven Anomaly Detection and Control**.
+
+The system operationalizes a **Lifecycle-Aware Triple-Loop Learning Framework** for adaptive database cybersecurity. It combines:
+
+- anomaly detection,
+- adaptive response,
+- meta-learning and drift recovery,
+- SHAP-based explainability,
+- RAG-supported explanation,
+- governance filtering,
+- auditability,
+- and reproducibility controls.
+
+The core contribution is not any single component in isolation, but the integration of these components into a lifecycle-aware, governed, and reproducible decision-support architecture for relational database cybersecurity.
+
+---
+
+## Final Reproducibility Audit
+
+The final reproducibility audit covered **45 unique metrics**:
+
+- **39 metrics** reproduced with exact `OK` status
+- **6 metrics** reproduced with `Rounded OK` status
+- **0 missing referenced output files**
+
+---
+
+## Main Reproduced Claims
+
+| Claim | Reproduced value |
+|---|---:|
+| Controlled SQL dataset size | 47,832 events |
+| Controlled SQL test size | 7,174 events |
+| Ordinary test-set accuracy | 0.98 |
+| Precision | 0.95 |
+| Recall | 0.95 |
+| F1-score | 0.95 |
+| ROC-AUC | 0.97 |
+| Response-risk reduction | 27.8% |
+| Governance audit completeness | 98.3% |
+| SHAP--RAG overall usefulness | 4.21 |
+| Drift recovery reduction | 83% |
+| Full AI-DAC F1 | 0.950 |
+| No-lifecycle F1 | 0.921 |
+| Transformer baseline F1 | 0.900 |
+| UNSW-NB15 F1 / ROC-AUC | 0.941 / 0.965 |
+| NSL-KDD F1 / ROC-AUC | 0.957 / 0.973 |
+
+---
+
+## Repository Files
+
+| File | Purpose |
+|---|---|
+| `aidac_reproducibility_package.tar.gz` | Full reproducibility archive |
+| `aidac_reproducibility_package.sha256` | SHA-256 checksum for integrity verification |
+| `final_reproducibility_audit_report.txt` | Human-readable final audit report |
+| `final_reproducibility_audit_summary.csv` | Metric-level audit summary |
+| `final_reproducibility_audit_summary.json` | Machine-readable audit summary |
+| `CITATION.cff` | Citation metadata for the reproducibility package |
+| `README.md` | Repository documentation |
+
+---
+
+## Verify Package Integrity
+
+Run:
 
 ```bash
-conda create -n rdbms-xai python=3.11 -y
-conda activate rdbms-xai
-pip install -r requirements.txt -r requirements-dev.txt
-```
-
-### Prepare data
-
-```bash
-python scripts/prepare_data.py \
-  --input data/raw/postgres_logs.csv \
-  --output data/DS1_processed/all.csv \
-  --config configs/preprocess.yaml
-```
-
-### Run the prequential pipeline
-
-```bash
-bash scripts/run_prequential.sh \
-  --dataset DS2 \
-  --source-csv data/DS2_processed/all.csv \
-  --time-col ts --label-col label --id-col event_id \
-  --windows "W1:W12" \
-  --seeds "1,7,13,21,42" \
-  --detector-config configs/detector.yaml \
-  --policy-config configs/policy.yaml \
-  --outdir artifacts/prequential/DS2
-```
-
-### Evaluate a trained run
-
-```bash
-python scripts/eval.py \
-  --test artifacts/prequential/DS2/windows/W5/test.csv \
-  --model-dir artifacts/prequential/DS2/runs/W5/seed_1 \
-  --policy-config configs/policy.yaml \
-  --id-col event_id --label-col label \
-  --out-json artifacts/prequential/DS2/runs/W5/seed_1/metrics.json \
-  --out-csv  artifacts/prequential/DS2/runs/W5/seed_1/predictions.csv
-```
-
-### Measure online latency (batch=1)
-
-```bash
-python scripts/measure_latency.py \
-  --model-dir artifacts/prequential/DS2/runs/W5/seed_1 \
-  --sample-csv artifacts/prequential/DS2/windows/W5/test.csv \
-  --id-col event_id --label-col label \
-  --n-warmup 100 --n-runs 10000 --device cpu
-```
-
----
-
-## Configuration Overview
-
-- `configs/detector.yaml` (example)
-  ```yaml
-  detector:
-    type: xgboost
-    params:
-      max_depth: 8
-      n_estimators: 600
-      learning_rate: 0.05
-      subsample: 0.8
-      colsample_bytree: 0.8
-    calibration: platt
-  ```
-- `configs/policy.yaml`
-  ```yaml
-  threshold: 0.5
-  lock_threshold: false
-  ```
-- `configs/preprocess.yaml`
-  ```yaml
-  time_bucket_minutes: 1
-  clip_quantile: 0.995
-  standardize: true
-  map_ip_to_cidr: "/24"
-  hash_salt_env: "ANON_SALT"
-  ```
-
----
-
-## Reproducibility
-
-- Fixed seeds; version-pinned dependencies; artifact checksums.
-- Artifacts per run: `model.pkl`, `policy.resolved.yaml`, `train_metrics.json`, `model_meta.json`, `feature_cols.json`, `metrics.json`, `predictions.csv`.
-- Replay: `scripts/replay_artifacts.py` re-scores immutable decisions for audit.
-
----
-
-## Data
-
-- **DS1** (enterprise PostgreSQL logs): access-controlled; anonymized.
-- **DS2** (TPC+inj): public, staged drift.
-- **DS3** (adv/synth): public MAD-GAN sequences.
-
----
-
-## Code & Availability
-
-- **Repository:** https://github.com/a09726537/AI-DAC (MIT License)
+sha256sum -c aidac_reproducibility_package.sha256
