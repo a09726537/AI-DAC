@@ -1,0 +1,43 @@
+Final AI-DAC reproducibility audit report
+========================================================================
+Created UTC: 2026-07-11T02:56:36.888225+00:00
+Metric register: /home/ubuntu/aidac-ai/reproducibility/audit/metric_register.csv
+Cleaned audit CSV: /home/ubuntu/aidac-ai/reproducibility/audit/final_reproducibility_audit_summary.csv
+Audit JSON: /home/ubuntu/aidac-ai/reproducibility/audit/final_reproducibility_audit_summary.json
+
+Total unique metrics audited: 45
+
+Status counts
+------------------------------------------------------------------------
+OK: 39
+Rounded OK: 6
+
+Major reproduced claims
+------------------------------------------------------------------------
+controlled_sql_dataset_events: 47832
+controlled_sql_test_events: 7174
+controlled_sql_precision: 0.95
+controlled_sql_recall: 0.95
+controlled_sql_f1: 0.95
+controlled_sql_roc_auc: 0.97
+ordinary_accuracy: 0.98
+response_risk_reduction_pct: 27.8
+governance_audit_completeness_pct: 98.3
+shap_rag_overall_usefulness: 4.21
+drift_recovery_reduction_pct: 83
+full_aidac_f1: 0.95
+no_lifecycle_f1: 0.921
+transformer_f1: 0.9
+unsw_nb15_f1: 0.941
+unsw_nb15_roc_auc: 0.965
+nsl_kdd_f1: 0.957
+nsl_kdd_roc_auc: 0.973
+
+Missing output files
+------------------------------------------------------------------------
+None
+
+Interpretation
+------------------------------------------------------------------------
+The audited metrics provide reproducibility evidence for the controlled SQL dataset, detection metrics, response-risk reduction, governance evaluation, latency measurements, explainability evaluation, drift recovery, ablation analysis, and public benchmark comparability.
+The reproducibility claim remains bounded to the documented laboratory configuration, datasets, scripts, seeds, commands, and generated output files.

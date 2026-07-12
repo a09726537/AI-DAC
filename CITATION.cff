@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "AI-DAC Reproducibility Package"
+message: "If you use this reproducibility package, please cite the doctoral thesis."
+type: dataset
+authors:
+  - family-names: Kandolo
+    given-names: William
+year: 2026
+repository-code: "https://github.com/a09726537/AI-DAC"
+abstract: "Reproducibility package for the doctoral thesis Lifecycle-Aware Database Cybersecurity: A Triple-Loop Learning Approach. The package contains dataset manifests, evaluation scripts, generated results, audit summaries, metric registers, and controlled SQL train, validation, and test partitions used to support the reported AI-DAC evaluation."
+keywords:
+  - database cybersecurity
+  - anomaly detection
+  - triple-loop learning
+  - AI-DAC
+  - reproducibility
+  - explainable AI
+  - governance
