@@ -1,0 +1,20 @@
+
+# Large external datasets should not be committed to Git
+external_datasets/
+data/raw/
+*.pcap
+*.pcapng
+*.evtx
+*.bak
+*.dump
+*.zip
+*.7z
+*.rar
+
+# Very large benchmark files are documented through manifests, not committed
+CIC-IDS2018/
+UNSW-NB15*/
+BoT-IoT/
+TON_IoT/
+NSL-KDD/
+LogHub/

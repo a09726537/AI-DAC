@@ -1,0 +1,28 @@
+{
+  "dataset_name": "BoT-IoT",
+  "active_for_evaluation": true,
+  "role_in_dissertation": "Comparative benchmark for botnet and high-volume attack behavior",
+  "windows_source_path": "G:\\VMware\\vmshare",
+  "linux_mount_path": "/mnt/hgfs/vmshare",
+  "project_path": "/home/ubuntu/aidac-ai/external_datasets",
+  "manifest_created_utc": "2026-07-11T00:18:35.120978+00:00",
+  "file_count": 2,
+  "total_size_mb": 440.01,
+  "files": [
+    {
+      "relative_path": "BoT-IoT/UNSW_2018_IoT_Botnet_Final_10_best_Testing.csv",
+      "file_name": "UNSW_2018_IoT_Botnet_Final_10_best_Testing.csv",
+      "size_bytes": 92281052,
+      "size_mb": 88.01,
+      "sha256": "8617de2ac5d6ca4c2f77272c7409253a396f2a9e667c29c8e797ab9f57a1868e"
+    },
+    {
+      "relative_path": "BoT-IoT/UNSW_2018_IoT_Botnet_Final_10_best_Training.csv",
+      "file_name": "UNSW_2018_IoT_Botnet_Final_10_best_Training.csv",
+      "size_bytes": 369103929,
+      "size_mb": 352.0,
+      "sha256": "047e577cd9c7f8f61d44ac170114497904c33091bf80d1dd5e682e353a69c15b"
+    }
+  ],
+  "limitations": "Public benchmark dataset. Used for comparative intrusion-detection evidence. Not treated as a substitute for database-specific SQL audit telemetry."
+}

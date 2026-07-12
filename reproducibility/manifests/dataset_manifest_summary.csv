@@ -1,0 +1,7 @@
+dataset_name,active_for_evaluation,file_count,total_size_mb,manifest_file
+BoT-IoT,True,2,440.01,reproducibility/manifests/BoT_IoT_manifest.json
+CSE-CIC-IDS2018,True,10,6213.97,reproducibility/manifests/CSE_CIC_IDS2018_manifest.json
+NSL-KDD,True,2,16.51,reproducibility/manifests/NSL_KDD_manifest.json
+TON_IoT,True,1,28.52,reproducibility/manifests/TON_IoT_manifest.json
+UNSW-NB15,True,2,45.47,reproducibility/manifests/UNSW_NB15_manifest.json
+LogHub,False,0,0.0,reproducibility/manifests/LogHub_manifest.json

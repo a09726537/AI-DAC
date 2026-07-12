@@ -1,0 +1,21 @@
+{
+  "dataset_name": "TON_IoT",
+  "active_for_evaluation": true,
+  "role_in_dissertation": "IoT and network telemetry benchmark",
+  "windows_source_path": "G:\\VMware\\vmshare",
+  "linux_mount_path": "/mnt/hgfs/vmshare",
+  "project_path": "/home/ubuntu/aidac-ai/external_datasets",
+  "manifest_created_utc": "2026-07-11T00:19:16.652096+00:00",
+  "file_count": 1,
+  "total_size_mb": 28.52,
+  "files": [
+    {
+      "relative_path": "TON_IoT/train_test_network.csv",
+      "file_name": "train_test_network.csv",
+      "size_bytes": 29902775,
+      "size_mb": 28.52,
+      "sha256": "26ddc513552de36de6428b2e578efaed2b57504c716dfba847cc0109a64e1974"
+    }
+  ],
+  "limitations": "Public benchmark dataset. Used for comparative intrusion-detection evidence. Not treated as a substitute for database-specific SQL audit telemetry."
+}

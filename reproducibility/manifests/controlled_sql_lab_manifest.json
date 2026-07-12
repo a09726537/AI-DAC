@@ -1,0 +1,145 @@
+{
+  "dataset_name": "Controlled SQL laboratory dataset",
+  "dataset_version": "controlled_sql_lab_47832_v1_seed42",
+  "created_utc": "2026-07-11T00:49:49.964319+00:00",
+  "generator_script": "scripts/create_controlled_sql_dataset_47832.py",
+  "random_seed": 42,
+  "total_events": 47832,
+  "database_environment": "PostgreSQL 16 and SQL Server 2022-style telemetry",
+  "description": "Deterministic controlled laboratory dataset generated for AI-DAC evaluation. It represents database-oriented telemetry and attack scenarios. It is not production enterprise data.",
+  "splits": [
+    {
+      "name": "FULL",
+      "rows": 47832,
+      "normal": 37500,
+      "anomalous": 10332,
+      "normal_pct": 78.4,
+      "anomalous_pct": 21.6,
+      "scenario_counts": {
+        "authentication_burst": 1303,
+        "backup_abuse": 1289,
+        "high_volume_extraction": 1256,
+        "privilege_escalation": 1261,
+        "schema_tampering": 1328,
+        "service_account_misuse": 1317,
+        "slow_rate_privilege_creep": 1244,
+        "sql_injection_evasion": 1334
+      }
+    },
+    {
+      "name": "TRAIN",
+      "rows": 33483,
+      "normal": 26263,
+      "anomalous": 7220,
+      "normal_pct": 78.44,
+      "anomalous_pct": 21.56,
+      "scenario_counts": {
+        "authentication_burst": 931,
+        "backup_abuse": 896,
+        "high_volume_extraction": 878,
+        "privilege_escalation": 864,
+        "schema_tampering": 917,
+        "service_account_misuse": 951,
+        "slow_rate_privilege_creep": 849,
+        "sql_injection_evasion": 934
+      }
+    },
+    {
+      "name": "VALIDATION",
+      "rows": 7175,
+      "normal": 5625,
+      "anomalous": 1550,
+      "normal_pct": 78.4,
+      "anomalous_pct": 21.6,
+      "scenario_counts": {
+        "authentication_burst": 185,
+        "backup_abuse": 187,
+        "high_volume_extraction": 204,
+        "privilege_escalation": 196,
+        "schema_tampering": 218,
+        "service_account_misuse": 185,
+        "slow_rate_privilege_creep": 188,
+        "sql_injection_evasion": 187
+      }
+    },
+    {
+      "name": "TEST",
+      "rows": 7174,
+      "normal": 5612,
+      "anomalous": 1562,
+      "normal_pct": 78.23,
+      "anomalous_pct": 21.77,
+      "scenario_counts": {
+        "authentication_burst": 187,
+        "backup_abuse": 206,
+        "high_volume_extraction": 174,
+        "privilege_escalation": 201,
+        "schema_tampering": 193,
+        "service_account_misuse": 181,
+        "slow_rate_privilege_creep": 207,
+        "sql_injection_evasion": 213
+      }
+    }
+  ],
+  "columns": [
+    "event_id",
+    "event_time",
+    "partition",
+    "source_system",
+    "source_vm",
+    "client_ip",
+    "database_name",
+    "login_name",
+    "lifecycle_phase",
+    "event_type",
+    "command_type",
+    "object_name",
+    "sql_text",
+    "query_length",
+    "rows_returned",
+    "failed_login_count",
+    "privilege_changed",
+    "maintenance_window",
+    "risk_label",
+    "severity",
+    "is_attack",
+    "attack_scenario",
+    "risk_score",
+    "baseline_score",
+    "baseline_decision",
+    "normalized_label",
+    "dataset_version"
+  ],
+  "files": [
+    {
+      "path": "data/raw/controlled_sql_events.csv",
+      "size_bytes": 14587375,
+      "sha256": "7b801ffda4c4d9590fb36d1a143db553501c9222f3a240905595ef8d13711d76"
+    },
+    {
+      "path": "data/processed/controlled_sql_processed.csv",
+      "size_bytes": 14587375,
+      "sha256": "7b801ffda4c4d9590fb36d1a143db553501c9222f3a240905595ef8d13711d76"
+    },
+    {
+      "path": "data/processed/controlled_sql_train.csv",
+      "size_bytes": 10190187,
+      "sha256": "af5bfa275b58fe9817817b606b88a823195320237605249f6c32acb63ee199ed"
+    },
+    {
+      "path": "data/processed/controlled_sql_validation.csv",
+      "size_bytes": 2219864,
+      "sha256": "5e91e6716fd830cbfcbbf4d2336e172c4329c982edb9caab8ae13f65df275ca0"
+    },
+    {
+      "path": "data/processed/controlled_sql_test.csv",
+      "size_bytes": 2178038,
+      "sha256": "03318102ff768468dc2dd78a84bbd7be6c7193dc72ecd931c7dbce59783116e4"
+    }
+  ],
+  "limitations": [
+    "Controlled laboratory dataset, not production telemetry.",
+    "Generated deterministically from scenario templates.",
+    "Used for RDBMS-specific evaluation claims within documented laboratory conditions."
+  ]
+}

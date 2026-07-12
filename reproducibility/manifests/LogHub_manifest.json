@@ -1,0 +1,13 @@
+{
+  "dataset_name": "LogHub",
+  "active_for_evaluation": false,
+  "role_in_dissertation": "Available log dataset collection; not used as an active primary evaluation dataset",
+  "windows_source_path": "G:\\VMware\\vmshare",
+  "linux_mount_path": "/mnt/hgfs/vmshare",
+  "project_path": "/home/ubuntu/aidac-ai/external_datasets",
+  "manifest_created_utc": "2026-07-11T00:19:16.972154+00:00",
+  "file_count": 0,
+  "total_size_mb": 0.0,
+  "files": [],
+  "limitations": "Public benchmark dataset. Used for comparative intrusion-detection evidence. Not treated as a substitute for database-specific SQL audit telemetry."
+}

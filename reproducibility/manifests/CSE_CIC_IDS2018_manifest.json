@@ -1,0 +1,84 @@
+{
+  "dataset_name": "CSE-CIC-IDS2018",
+  "active_for_evaluation": true,
+  "role_in_dissertation": "Comparative benchmark using processed CICFlowMeter CSV files",
+  "windows_source_path": "G:\\VMware\\vmshare",
+  "linux_mount_path": "/mnt/hgfs/vmshare",
+  "project_path": "/home/ubuntu/aidac-ai/external_datasets",
+  "manifest_created_utc": "2026-07-11T00:19:16.414076+00:00",
+  "file_count": 10,
+  "total_size_mb": 6213.97,
+  "files": [
+    {
+      "relative_path": "CIC-IDS2018/Friday-02-03-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Friday-02-03-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 334747423,
+      "size_mb": 319.24,
+      "sha256": "0750aa6ce9e44d2988159c44319eda7ffb5fe951daf31dede3fbf36f73630007"
+    },
+    {
+      "relative_path": "CIC-IDS2018/Friday-16-02-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Friday-16-02-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 241993404,
+      "size_mb": 230.78,
+      "sha256": "262dc64f2e9a0f4e8def2f377eff04760eeade0f818075a3b6ba0c76eba9361b"
+    },
+    {
+      "relative_path": "CIC-IDS2018/Friday-23-02-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Friday-23-02-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 356724869,
+      "size_mb": 340.2,
+      "sha256": "f3b9faa99f335426db2c787d9bcd3e170b853379c6230cfdb360fbb92927dfe6"
+    },
+    {
+      "relative_path": "CIC-IDS2018/Thuesday-20-02-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Thuesday-20-02-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 4054925350,
+      "size_mb": 3867.08,
+      "sha256": "7287a4d7740a1dddbf330ceb2beb6a4889d33ba63674558a68b5eb50d16711df"
+    },
+    {
+      "relative_path": "CIC-IDS2018/Thursday-01-03-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Thursday-01-03-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 102541311,
+      "size_mb": 97.79,
+      "sha256": "47a418356a3502e6552f94a9de94f3893b37836788eab7ef4c4eb17159629c9c"
+    },
+    {
+      "relative_path": "CIC-IDS2018/Thursday-15-02-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Thursday-15-02-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 375945899,
+      "size_mb": 358.53,
+      "sha256": "fa2947a8256d81ee9103ae16139d62d0e17aa23e696ee80d9e76fb51c01c9c4b"
+    },
+    {
+      "relative_path": "CIC-IDS2018/Thursday-22-02-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Thursday-22-02-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 355212438,
+      "size_mb": 338.76,
+      "sha256": "7ad8e822cd181b93523e8e679484d6974ad02b16454b43415cc53ffaf00408d1"
+    },
+    {
+      "relative_path": "CIC-IDS2018/Wednesday-14-02-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Wednesday-14-02-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 277927200,
+      "size_mb": 265.05,
+      "sha256": "33055f1842df8fe79b190505d36dad614dd4e282e2d754813c156ddd6008d099"
+    },
+    {
+      "relative_path": "CIC-IDS2018/Wednesday-21-02-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Wednesday-21-02-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 223213818,
+      "size_mb": 212.87,
+      "sha256": "6ed6292a6cb1559aed7bb1f7ef1013292ddc3b088c2e778f7d0c48b06b3de59d"
+    },
+    {
+      "relative_path": "CIC-IDS2018/Wednesday-28-02-2018_TrafficForML_CICFlowMeter.csv",
+      "file_name": "Wednesday-28-02-2018_TrafficForML_CICFlowMeter.csv",
+      "size_bytes": 192590860,
+      "size_mb": 183.67,
+      "sha256": "f395a834222d359b3d82e45ccf8b240ca4bce406f4d7bcbd94e4b45fbb17bc1b"
+    }
+  ],
+  "limitations": "Public benchmark dataset. Used for comparative intrusion-detection evidence. Not treated as a substitute for database-specific SQL audit telemetry."
+}

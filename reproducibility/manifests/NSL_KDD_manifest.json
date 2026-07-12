@@ -1,0 +1,28 @@
+{
+  "dataset_name": "NSL-KDD",
+  "active_for_evaluation": true,
+  "role_in_dissertation": "Legacy IDS benchmark for methodological continuity",
+  "windows_source_path": "G:\\VMware\\vmshare",
+  "linux_mount_path": "/mnt/hgfs/vmshare",
+  "project_path": "/home/ubuntu/aidac-ai/external_datasets",
+  "manifest_created_utc": "2026-07-11T00:19:16.518820+00:00",
+  "file_count": 2,
+  "total_size_mb": 16.51,
+  "files": [
+    {
+      "relative_path": "NSL-KDD/KDDTest+.txt",
+      "file_name": "KDDTest+.txt",
+      "size_bytes": 2573994,
+      "size_mb": 2.45,
+      "sha256": "a5c2c0df447353a2d28000d3fd834678b59f6f3bc2a8b4ccf8a1787161eb9f17"
+    },
+    {
+      "relative_path": "NSL-KDD/KDDTrain+.txt",
+      "file_name": "KDDTrain+.txt",
+      "size_bytes": 14738831,
+      "size_mb": 14.06,
+      "sha256": "0b732256db3e34094774988f8f902966db7fde73d4984c002d6726d201f2523c"
+    }
+  ],
+  "limitations": "Public benchmark dataset. Used for comparative intrusion-detection evidence. Not treated as a substitute for database-specific SQL audit telemetry."
+}

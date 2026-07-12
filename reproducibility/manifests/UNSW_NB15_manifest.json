@@ -1,0 +1,28 @@
+{
+  "dataset_name": "UNSW-NB15",
+  "active_for_evaluation": true,
+  "role_in_dissertation": "Modern network intrusion-detection benchmark",
+  "windows_source_path": "G:\\VMware\\vmshare",
+  "linux_mount_path": "/mnt/hgfs/vmshare",
+  "project_path": "/home/ubuntu/aidac-ai/external_datasets",
+  "manifest_created_utc": "2026-07-11T00:19:16.970296+00:00",
+  "file_count": 2,
+  "total_size_mb": 45.47,
+  "files": [
+    {
+      "relative_path": "UNSW-NB15 2024/UNSW_NB15_testing-set.csv",
+      "file_name": "UNSW_NB15_testing-set.csv",
+      "size_bytes": 15380800,
+      "size_mb": 14.67,
+      "sha256": "734fe6642edf758f7c94d7d9149426b49d202fe8e7bf0bef47392489c3c0a559"
+    },
+    {
+      "relative_path": "UNSW-NB15 2024/UNSW_NB15_training-set.csv",
+      "file_name": "UNSW_NB15_training-set.csv",
+      "size_bytes": 32293018,
+      "size_mb": 30.8,
+      "sha256": "bec7dd5ec88dc2a0ccc7a07879d338395ed7421750f675fd0339e07dfe0648fa"
+    }
+  ],
+  "limitations": "Public benchmark dataset. Used for comparative intrusion-detection evidence. Not treated as a substitute for database-specific SQL audit telemetry."
+}
