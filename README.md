@@ -18,7 +18,7 @@ The material currently available in this repository documents controlled laborat
 
 The numerical values, audit records, comparison tables, and generated outputs currently included in the repository are preparatory results. They must not be interpreted as final confirmatory dissertation evidence and must not be used to accept or reject the dissertation hypotheses.
 
-The confirmatory evaluation will be conducted only after the formal protocol freeze. A separate immutable thesis-evaluation release will then identify the exact software commit, dataset manifests, preprocessing rules, parameters, decision thresholds, execution commands, raw outputs, statistical procedures, and audit records used for the confirmatory evaluation.
+The confirmatory evaluation will be conducted only after the formal protocol freeze. A separate immutable thesis-evaluation release will identify the exact software commit, dataset manifests, preprocessing rules, parameters, decision thresholds, execution commands, raw outputs, statistical procedures, and audit records used for the confirmatory evaluation.
 
 The active `main` branch remains a development and preparatory research branch.
 
@@ -360,29 +360,9 @@ Any necessary deviation will be documented explicitly, justified, timestamped, a
 
 ---
 
-## Thesis-Evaluation Release
+## Current Preparatory Version
 
-The repository state currently available on the `main` branch is not the immutable thesis-evaluation release.
-
-After formal protocol freeze, a dedicated release will identify the exact software and evidence state used for the confirmatory dissertation evaluation.
-
-The future thesis-evaluation release will include or reference:
-
-- an immutable commit hash;
-- a signed or annotated version tag;
-- dataset manifests and checksums;
-- frozen configuration files;
-- execution commands;
-- dependency specifications;
-- container or environment definitions;
-- raw confirmatory outputs;
-- processed result tables;
-- statistical-analysis outputs;
-- audit records;
-- integrity hashes; and
-- a release-specific reproducibility report.
-
-A suitable current preparatory version identifier is:
+The current documented preparatory repository state should be identified by the annotated tag:
 
 ```text
 v0.9.0-preconfirmatory
